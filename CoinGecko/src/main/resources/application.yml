@@ -1,0 +1,12 @@
+#application.yml
+---
+spring:
+  profiles:
+    default: local
+    include: local
+---
+#spring:
+#  profiles:
+#    default: aws
+#    include: aws
+#---

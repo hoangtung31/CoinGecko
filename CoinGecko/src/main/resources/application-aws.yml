@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    username: root
+    password: hoangtung32
+    url: jdbc:mysql://localhost:3306/micro_db?useSSL=false
