@@ -1,19 +1,23 @@
 package uet.tunghd.coingecko.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-import uet.tunghd.coingecko.model.CoinID;
+import uet.tunghd.coingecko.model.Token;
+import uet.tunghd.coingecko.service.TokenService;
 
-import java.lang.reflect.Type;
+import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class RestSpringBootController {
+    @Autowired
+    TokenService tokenService;
+
     @RequestMapping("/hello")
     public String hello(){
         return "Hello world";
@@ -29,16 +33,38 @@ public class RestSpringBootController {
 
     // List all supported coins id
     @GetMapping(value = "/coins/list")
-    private List<CoinID> coinList() {
+    private List<Token> coinList() {
         String uri = "https://api.coingecko.com/api/v3/coins/list";
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<List<CoinID>> response = restTemplate.exchange(
+        ResponseEntity<List<Token>> response = restTemplate.exchange(
                 uri,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<List<CoinID>>() {
+                new ParameterizedTypeReference<List<Token>>() {
                 });
-        List<CoinID> coinIDs = response.getBody();
-        return coinIDs;
+        List<Token> tokenList = response.getBody();
+//        tokenService.saveAll(tokenList);
+        return tokenList;
+    }
+
+    @GetMapping(value = "/coins/update/{coinID}")
+    private Token updateCoin(@PathVariable(name = "coinID") Long coinID) {
+        Optional<Token> dbToken = tokenService.getCoinBy(coinID);
+        System.out.println(dbToken);
+        if(dbToken != null) {
+            String uri = "https://api.coingecko.com/api/v3/coins/" + dbToken.get().getId();
+            System.out.println(uri);
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<Token> response = restTemplate.exchange(
+                    uri,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<Token>() {
+                    }
+            );
+            return tokenService.updateTokenInfo(coinID, dbToken);
+        } else {
+            return null;
+        }
     }
 }
