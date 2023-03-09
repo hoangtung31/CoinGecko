@@ -24,11 +24,11 @@ public class TokenService {
         return tokenRepository.saveAll(tokens);
     }
 
-    public Token updateTokenInfo(Long id, Optional<Token> token) {
+    public Token updateTokenInfo(Long id, Token token) {
         Token dbToken = tokenRepository.findById(id).orElse(null);
         if (dbToken != null) {
             //dbToken.setDescription(token.get().getDescription());
-            dbToken.setContract_address("token.get().getContract_address()");
+            dbToken.setContract_address(token.getContract_address());
             System.out.println(token);
             return tokenRepository.save(dbToken);
         } else {

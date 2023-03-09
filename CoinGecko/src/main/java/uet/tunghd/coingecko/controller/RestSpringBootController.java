@@ -62,7 +62,8 @@ public class RestSpringBootController {
                     new ParameterizedTypeReference<Token>() {
                     }
             );
-            return tokenService.updateTokenInfo(coinID, dbToken);
+            Token lastestToken = response.getBody();
+            return tokenService.updateTokenInfo(coinID, lastestToken);
         } else {
             return null;
         }
