@@ -9,7 +9,6 @@ import org.springframework.web.client.RestTemplate;
 import uet.tunghd.coingecko.model.Token;
 import uet.tunghd.coingecko.service.TokenService;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,23 +48,6 @@ public class RestSpringBootController {
 
     @GetMapping(value = "/coins/update/{coinID}")
     private Token updateCoin(@PathVariable(name = "coinID") Long coinID) {
-        Optional<Token> dbToken = tokenService.getCoinBy(coinID);
-        System.out.println(dbToken);
-        if(dbToken != null) {
-            String uri = "https://api.coingecko.com/api/v3/coins/" + dbToken.get().getId();
-            System.out.println(uri);
-            RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<Token> response = restTemplate.exchange(
-                    uri,
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<Token>() {
-                    }
-            );
-            Token lastestToken = response.getBody();
-            return tokenService.updateTokenInfo(coinID, lastestToken);
-        } else {
-            return null;
-        }
+        return tokenService.updateToken(coinID);
     }
 }
